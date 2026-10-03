@@ -1,0 +1,6 @@
+{
+  "name": "PolyPharm-Twin",
+  "description": "A Dynamic Digital Twin for Multi-Drug Metabolic Cascade, Interaction and Adverse Drug Reaction Simulation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
