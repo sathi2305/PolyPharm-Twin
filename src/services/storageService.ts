@@ -1,4 +1,4 @@
-import { Medicine, ChatSession, RegimenBaseline, PatientProfilePreset, ClinicalInteractionNote, LlmTrainingProfile, RegimenAnnotation } from '../types';
+import { Medicine, ChatSession, RegimenBaseline, PatientProfilePreset, ClinicalInteractionNote, LlmTrainingProfile, RegimenAnnotation, RegimenSnapshot } from '../types';
 import { ALL_INITIAL_MEDICINES } from '../data/medicinesData';
 import { DEFAULT_PATIENT_PRESETS } from '../data/patientPresetsData';
 import { DEFAULT_CLINICAL_INTERACTION_NOTES } from '../data/defaultClinicalNotesData';
@@ -20,6 +20,7 @@ const STORAGE_KEYS = {
   LLM_TRAINING_PROFILE: 'polypharm_llm_training_profile_v3',
   CUSTOM_LLM_PROFILES: 'polypharm_custom_llm_profiles_v3',
   REGIMEN_ANNOTATIONS: 'polypharm_regimen_annotations_v1',
+  REGIMEN_SNAPSHOTS: 'polypharm_regimen_snapshots_v1',
 };
 
 export const storageService = {
@@ -571,4 +572,115 @@ export const storageService = {
       return this.getRegimenAnnotations();
     }
   },
+
+  // Regimen Snapshots (saved combinations + individual dosages + patient parameters)
+  getRegimenSnapshots(): RegimenSnapshot[] {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.REGIMEN_SNAPSHOTS);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed to load regimen snapshots:', e);
+    }
+    // Default initial clinical challenge snapshots
+    const defaults: RegimenSnapshot[] = [
+      {
+        id: 'snapshot-afib-triple',
+        name: 'AFib Triple Cascade (Warfarin + Amiodarone + Simvastatin)',
+        description: 'Classic CYP2C9/3A4 dual inhibition challenge with extreme bleeding & rhabdomyolysis risk',
+        timestamp: new Date().toISOString(),
+        drugIds: ['warfarin', 'amiodarone', 'simvastatin'],
+        drugNames: ['Warfarin', 'Amiodarone', 'Simvastatin'],
+        dosages: { warfarin: 5, amiodarone: 200, simvastatin: 40 },
+        patientContext: {
+          age: 68,
+          gender: 'male',
+          weightKg: 78,
+          renalFunctionEgfr: 65,
+          hepaticFunction: 'normal',
+          cyp2d6Genotype: 'normal_metabolizer',
+          cyp2c19Genotype: 'normal_metabolizer',
+          cyp2c9Genotype: 'intermediate_metabolizer',
+          slco1b1Genotype: 'decreased_function',
+          vkorc1Genotype: 'high_warfarin_sensitivity',
+        },
+        tags: ['Anticoagulant', 'Antiarrhythmic', 'CYP2C9/3A4'],
+        isFavorite: true,
+      },
+      {
+        id: 'snapshot-post-pci',
+        name: 'Post-PCI Dual Antiplatelet + Beta-Blocker',
+        description: 'Clopidogrel + Aspirin + Metoprolol with CYP2C19 prodrug bioactivation test',
+        timestamp: new Date().toISOString(),
+        drugIds: ['clopidogrel', 'aspirin', 'metoprolol'],
+        drugNames: ['Clopidogrel', 'Aspirin', 'Metoprolol'],
+        dosages: { clopidogrel: 75, aspirin: 81, metoprolol: 50 },
+        patientContext: {
+          age: 61,
+          gender: 'female',
+          weightKg: 70,
+          renalFunctionEgfr: 82,
+          hepaticFunction: 'normal',
+          cyp2d6Genotype: 'intermediate_metabolizer',
+          cyp2c19Genotype: 'poor_metabolizer',
+        },
+        tags: ['Cardiovascular', 'Antiplatelet', 'CYP2C19'],
+        isFavorite: false,
+      },
+      {
+        id: 'snapshot-ckd-heart-failure',
+        name: 'Cardiorenal Regimen (Metoprolol + Lisinopril + Furosemide)',
+        description: 'Standard HFrEF neurohormonal blockade evaluated under moderate CKD stage 3b',
+        timestamp: new Date().toISOString(),
+        drugIds: ['metoprolol', 'lisinopril', 'furosemide'],
+        drugNames: ['Metoprolol', 'Lisinopril', 'Furosemide'],
+        dosages: { metoprolol: 25, lisinopril: 10, furosemide: 40 },
+        patientContext: {
+          age: 74,
+          gender: 'male',
+          weightKg: 82,
+          renalFunctionEgfr: 42,
+          hepaticFunction: 'normal',
+          cyp2d6Genotype: 'poor_metabolizer',
+          cyp2c19Genotype: 'normal_metabolizer',
+        },
+        tags: ['HFrEF', 'Renal Impairment', 'Electrolytes'],
+        isFavorite: false,
+      },
+    ];
+    this.saveRegimenSnapshots(defaults);
+    return defaults;
+  },
+
+  saveRegimenSnapshots(snapshots: RegimenSnapshot[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.REGIMEN_SNAPSHOTS, JSON.stringify(snapshots));
+    } catch (e) {
+      console.warn('Failed to save regimen snapshots:', e);
+    }
+  },
+
+  createRegimenSnapshot(snapshot: RegimenSnapshot): RegimenSnapshot[] {
+    const list = this.getRegimenSnapshots();
+    const updated = [snapshot, ...list.filter((s) => s.id !== snapshot.id)];
+    this.saveRegimenSnapshots(updated);
+    return updated;
+  },
+
+  deleteRegimenSnapshot(id: string): RegimenSnapshot[] {
+    const list = this.getRegimenSnapshots();
+    const updated = list.filter((s) => s.id !== id);
+    this.saveRegimenSnapshots(updated);
+    return updated;
+  },
+
+  toggleFavoriteSnapshot(id: string): RegimenSnapshot[] {
+    const list = this.getRegimenSnapshots();
+    const updated = list.map((s) => (s.id === id ? { ...s, isFavorite: !s.isFavorite } : s));
+    this.saveRegimenSnapshots(updated);
+    return updated;
+  },
 };
+

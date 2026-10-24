@@ -1,0 +1,58 @@
+[
+  {
+    "id": "polypharm_pair_001_en",
+    "language": "en",
+    "instruction": "Analyze the pharmacokinetic drug-drug interaction mechanism between Warfarin and Amiodarone in a patient on long-term anticoagulation.",
+    "input": "Patient: 68-year-old male, Warfarin 5mg daily (target INR 2.0-3.0), Amiodarone 200mg daily initiated for atrial fibrillation. CYP2C9 diplotype: *1/*3 (intermediate metabolizer).",
+    "response": "### Mechanistic Pharmacokinetic Analysis: Warfarin + Amiodarone\n\n1. **Primary Metabolic Bottleneck:**\n   - **S-Warfarin** (the pharmacologically more potent enantiomer, 3-5x higher anticoagulant potency than R-warfarin) is almost exclusively metabolized by hepatic **CYP2C9**.\n   - **Amiodarone** and its primary active metabolite, **N-desethylamiodarone (DEA)**, are potent non-competitive and mechanism-based inhibitors of CYP2C9 (Ki ~ 1.5 µM), as well as moderate inhibitors of CYP3A4 and P-glycoprotein (P-gp).\n\n2. **Exposure Delta & Pharmacokinetics:**\n   - Co-administration causes an abrupt 50% to 100% reduction in S-warfarin oral clearance.\n   - Serum S-warfarin area under the curve (AUC0-48h) elevates 1.8- to 2.4-fold, leading to supra-therapeutic hypoprothrombinemia.\n\n3. **Pharmacogenomic Vulnerability:**\n   - In a patient with CYP2C9 *1/*3 (intermediate metabolizer, ~50% baseline clearance), CYP2C9 metabolic reserve is already constrained. Amiodarone inhibition induces near-complete metabolic arrest for S-warfarin elimination.\n\n4. **Evidence-Based Clinical Recommendation:**\n   - Proactively decrease the maintenance dose of Warfarin by 33% to 50% upon initiating Amiodarone.\n   - Monitor INR every 48-72 hours until a stable steady-state is re-established (noting Amiodarone's prolonged elimination half-life of 40-55 days).",
+    "metadata": {
+      "provenance": "DrugBank 5.1 (DB00682, DB01118) / TwoSIDES ADR Association",
+      "citations": ["CPIC Guideline for Pharmacogenetics-Guided Warfarin Dosing (PMID: 28198005)", "FDA Warfarin Prescribing Information SPL"],
+      "category": "pharmacokinetics_interaction",
+      "split": "train",
+      "drug_combination": ["warfarin", "amiodarone"]
+    }
+  },
+  {
+    "id": "polypharm_pair_001_ta",
+    "language": "ta",
+    "instruction": "நீண்டகால இரத்த உறைவு தடுப்பு சிகிச்சையில் உள்ள நோயாளிக்கு வார்பரின் (Warfarin) மற்றும் அமியோடரோன் (Amiodarone) இடையேயான மருந்து இடைவினை வழிமுறையை விளக்குக.",
+    "input": "நோயாளி: 68 வயது ஆண், வார்பரின் 5 மிகி தினசரி, ஏட்ரியல் ஃபைப்ரிலேஷனுக்காக அமியோடரோன் 200 மிகி தொடங்கப்பட்டுள்ளது. CYP2C9 மரபணு வகை: *1/*3.",
+    "response": "### மருந்தியல் மற்றும் வளர்சிதை மாற்ற வழிமுறை ஆய்வு: வார்பரின் + அமியோடரோன்\n\n1. **முதன்மை வளர்சிதை மாற்றத் தடை:**\n   - வார்பரினின் அதிக வீரியமிக்க வடிவமான **S-Warfarin**, பிரதானமாக கல்லீரலில் உள்ள **CYP2C9** என்சைம் மூலம் வெளியேற்றப்படுகிறது.\n   - **அமியோடரோன் (Amiodarone)** மற்றும் அதன் செயலூக்க துணைப்பொருள் (DEA), CYP2C9 என்சைமை மிகத்தீவிரமாக தடுக்கின்றன (Ki ~ 1.5 µM).\n\n2. **மருந்து செறிவு அதிகரிப்பு:**\n   - இந்த என்சைம் தடுப்பினால், S-Warfarin வெளியேற்றம் 50% முதல் 100% வரை தடைபடுகிறது. இரத்தத்தில் வார்பரின் செறிவு இருமடங்கு அதிகரித்து அதீத இரத்தப்போக்கு (Hemorrhage) மற்றும் உயர் INR அபாயத்தை உண்டாக்குகிறது.\n\n3. **மரபணு பாதிப்பு (Pharmacogenomics):**\n   - நோயாளிக்கு CYP2C9 *1/*3 வகை மரபணு இருப்பதால், இயல்பாகவே வெளியேற்றத் திறன் குறைவு. அமியோடரோன் இணையும்போது வார்பரின் நச்சுத்தன்மை உச்சமடைகிறது.\n\n4. **மருத்துவப் பரிந்துரை:**\n   - அமியோடரோன் தொடங்கும்போதே வார்பரின் அளவை 33% முதல் 50% வரை குறைக்க வேண்டும்.\n   - INR அளவை 2 முதல் 3 நாட்களுக்கு ஒருமுறை தொடர்ந்து கண்காணிக்க வேண்டும்.",
+    "metadata": {
+      "provenance": "DrugBank 5.1 (DB00682, DB01118) / TwoSIDES ADR Association",
+      "citations": ["CPIC Guideline for Pharmacogenetics-Guided Warfarin Dosing (PMID: 28198005)", "FDA Warfarin Prescribing Information SPL"],
+      "category": "pharmacokinetics_interaction",
+      "split": "train",
+      "drug_combination": ["warfarin", "amiodarone"]
+    }
+  },
+  {
+    "id": "polypharm_pair_002_en",
+    "language": "en",
+    "instruction": "Evaluate the clinical safety of adding Clarithromycin to a patient taking Simvastatin 40mg.",
+    "input": "Patient on Simvastatin 40mg daily for hyperlipidemia, prescribed Clarithromycin 500mg BID for community-acquired pneumonia.",
+    "response": "### Clinical Safety Evaluation: Simvastatin + Clarithromycin\n\n1. **Contraindication Status:**\n   - **CONTRAINDICATED.** Co-administration of Simvastatin with strong CYP3A4 inhibitors (including Clarithromycin, Ketoconazole, Itraconazole) is formally contraindicated in FDA and EMA package inserts.\n\n2. **Mechanism of Toxicity:**\n   - Simvastatin is a lactone prodrug whose extensive first-pass hepatic metabolism depends almost entirely on **CYP3A4** (bioavailability < 5%).\n   - Clarithromycin is a potent, irreversible mechanism-based inhibitor of CYP3A4.\n   - Result: Simvastatin acid AUC increases up to **10- to 12-fold**, and Cmax shifts dramatically.\n\n3. **Adverse Drug Reaction:**\n   - Severe statin-induced skeletal myopathy, elevated serum creatine kinase (CK), and life-threatening **rhabdomyolysis** with secondary acute renal failure due to myoglobin casts.\n\n4. **Clinical Action:**\n   - Temporarily suspend Simvastatin during the antibiotic course, or substitute with an antibiotic that does not inhibit CYP3A4 (e.g., Azithromycin or Amoxicillin/Clavulanate), or substitute Simvastatin with a statin independent of CYP3A4 (e.g., Pravastatin or Rosuvastatin at moderate dose).",
+    "metadata": {
+      "provenance": "FDA Drug Safety Communication / DrugBank 5.1 (DB00641, DB01211)",
+      "citations": ["FDA Safety Alert: Simvastatin and CYP3A4 Inhibitors", "TwoSIDES Rhabdomyolysis Dataset"],
+      "category": "contraindication_adr",
+      "split": "train",
+      "drug_combination": ["simvastatin", "clarithromycin"]
+    }
+  },
+  {
+    "id": "polypharm_pair_003_en",
+    "language": "en",
+    "instruction": "Explain how CYP2C19 loss-of-function variants impact Clopidogrel antiplatelet response and evaluate co-administration with Omeprazole.",
+    "input": "Patient post-percutaneous coronary intervention (PCI) with drug-eluting stent. Clopidogrel 75mg daily + Omeprazole 20mg daily for gastric protection. Patient genotype: CYP2C19 *2/*2 (poor metabolizer).",
+    "response": "### Pharmacogenomic & DDI Analysis: Clopidogrel + Omeprazole in CYP2C19 Poor Metabolizer\n\n1. **Prodrug Activation Pathway:**\n   - Clopidogrel requires two-step hepatic bioactivation to generate its active thiol metabolite (R-130964). CYP2C19 mediates approximately 45% of step 1 and 80% of step 2.\n\n2. **Impact of CYP2C19 *2/*2 Diplotype:**\n   - In poor metabolizers (*2/*2), active thiol metabolite AUC drops by >70% compared to normal metabolizers (*1/*1).\n   - Clopidogrel fails to sufficiently inhibit platelet P2Y12 receptors, creating a marked clinical hazard for acute stent thrombosis and recurrent myocardial infarction (CPIC Level A recommendation).\n\n3. **Omeprazole Pharmacokinetic Competition:**\n   - Omeprazole competitively inhibits CYP2C19, further attenuating any residual prodrug activation.\n\n4. **CPIC Guidelines & Action:**\n   - Switch antiplatelet therapy to **Prasugrel** (60mg load, 10mg daily) or **Ticagrelor** (180mg load, 90mg BID), neither of which requires CYP2C19 bioactivation.\n   - If PPI gastric protection is indicated, use **Pantoprazole** (a significantly weaker CYP2C19 inhibitor).",
+    "metadata": {
+      "provenance": "CPIC Guidelines for Clopidogrel and CYP2C19 (PMID: 23698643)",
+      "citations": ["Clinical Pharmacogenetics Implementation Consortium (CPIC)", "FDA Black Box Warning: Plavix"],
+      "category": "pharmacogenomics_cpic",
+      "split": "test",
+      "drug_combination": ["clopidogrel", "omeprazole"]
+    }
+  }
+]

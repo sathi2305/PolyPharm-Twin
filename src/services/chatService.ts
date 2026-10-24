@@ -1,4 +1,5 @@
 import { ChatMessage, PatientContext, LlmReasoningMode, LlmKnowledgeScope } from '../types';
+import { API_ENDPOINTS } from './aiConfig';
 
 export interface ChatRequestPayload {
   message: string;
@@ -31,7 +32,7 @@ export interface ChatRequestPayload {
 
 export async function sendChatMessage(payload: ChatRequestPayload): Promise<{ text: string; source: string }> {
   try {
-    const res = await fetch('/api/chat', {
+    const res = await fetch(API_ENDPOINTS.CHAT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

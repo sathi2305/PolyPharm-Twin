@@ -7,7 +7,7 @@ import { buildDynamicKnowledgeGraph } from './engine/knowledgeGraph';
 import { predictPolypharmacyAdrs } from './engine/temporalGnnAdr';
 import { detectSevereInteractionsOnAdd } from './engine/interactionAlertDetector';
 
-import { TopNav, NavTab } from './components/TopNav';
+import { SidebarNav, NavTab } from './components/SidebarNav';
 import { DisclaimerBanner } from './components/DisclaimerBanner';
 import { Dashboard } from './components/Dashboard';
 import { MedicineLibrary } from './components/MedicineLibrary';
@@ -253,8 +253,8 @@ function AppContent() {
       {/* Medical Safety Disclaimer Banner */}
       <DisclaimerBanner langCode={currentLanguage.code} />
 
-      {/* Top Navigation & System Status Indicators */}
-      <TopNav
+      {/* Sidebar Navigation Drawer & Header Status Bar */}
+      <SidebarNav
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         activeDrugCount={activeDrugs.length}
@@ -345,7 +345,19 @@ function AppContent() {
         )}
 
         {activeTab === 'knowledge_graph' && (
-          <KnowledgeGraphView graph={graph} activeDrugs={activeDrugs} />
+          <KnowledgeGraphView
+            graph={graph}
+            activeDrugs={activeDrugs}
+            onPinToWorkbench={(node) => {
+              if (node.type === 'drug') {
+                if (!activeDrugIds.includes(node.id)) {
+                  handleToggleActiveDrug(node.id);
+                }
+              }
+            }}
+            onToggleActiveDrug={handleToggleActiveDrug}
+            onNavigateTab={(tab) => setActiveTab(tab as NavTab)}
+          />
         )}
 
         {activeTab === 'enzymes' && (

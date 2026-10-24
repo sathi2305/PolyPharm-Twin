@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExplainabilityRecord } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 import { Sparkles, ArrowRight, ShieldAlert, BookOpen, Layers, CheckCircle2 } from 'lucide-react';
 
 interface ExplainableAiPanelProps {
@@ -7,10 +8,12 @@ interface ExplainableAiPanelProps {
 }
 
 export const ExplainableAiPanel: React.FC<ExplainableAiPanelProps> = ({ explanations }) => {
+  const { translate } = useLanguage();
+
   if (!explanations || explanations.length === 0) {
     return (
       <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 text-center text-slate-500 text-xs">
-        No high-risk interaction flags active. Select two or more interacting medicines to inspect the XAI reasoning trace.
+        {translate('No high-risk interaction flags active. Select two or more interacting medicines to inspect the XAI reasoning trace.')}
       </div>
     );
   }
@@ -21,15 +24,14 @@ export const ExplainableAiPanel: React.FC<ExplainableAiPanelProps> = ({ explanat
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-amber-400" />
           <h3 className="font-bold text-slate-100 text-base tracking-tight">
-            Explainable AI (XAI) Causal Attribution & Mechanistic Chains
+            {translate('Explainable AI Attribution')}
           </h3>
           <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-950 text-amber-300 border border-amber-800/60">
             TRANSPARENT REASONING
           </span>
         </div>
         <p className="text-xs text-slate-400 leading-relaxed max-w-3xl">
-          Deconstructs the Temporal Graph Neural Network’s prediction into biochemical causality, enzyme flux changes,
-          attention weights, and clinical evidence.
+          {translate('Deconstructs the Temporal Graph Neural Network’s prediction into biochemical causality, enzyme flux changes, attention weights, and clinical evidence.')}
         </p>
       </div>
 

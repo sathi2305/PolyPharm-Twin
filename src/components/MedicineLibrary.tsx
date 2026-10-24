@@ -37,7 +37,7 @@ export const MedicineLibrary: React.FC<MedicineLibraryProps> = ({
   onAddMedicine,
   onDeleteMedicine,
 }) => {
-  const { t } = useLanguage();
+  const { t, translate } = useLanguage();
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedClass, setSelectedClass] = useState<string>('all');
   const [selectedEnzyme, setSelectedEnzyme] = useState<string>('all');
@@ -146,14 +146,14 @@ export const MedicineLibrary: React.FC<MedicineLibraryProps> = ({
             <div className="flex items-center gap-2">
               <Database className="w-5 h-5 text-cyan-400" />
               <h2 className="text-xl font-bold text-white tracking-tight">
-                Curated Medicine & Prescription Library
+                {translate('Comprehensive Medicine Library')}
               </h2>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-cyan-950 text-cyan-300 border border-cyan-800">
                 {medicines.length} Medicines Loaded
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              Comprehensive chemical, ADME pharmacokinetic, enzymatic, and adverse event profiles for clinical simulation.
+              {translate('Comprehensive chemical, ADME pharmacokinetic, enzymatic, and adverse event profiles for clinical simulation.')}
             </p>
           </div>
 
@@ -163,7 +163,7 @@ export const MedicineLibrary: React.FC<MedicineLibraryProps> = ({
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-medium text-xs shadow-md shadow-cyan-950/40 cursor-pointer transition-all"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add Medicine</span>
+              <span>{translate('Add Medicine')}</span>
             </button>
             <button
               onClick={handleExportCsv}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { AdrPrediction } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 import { ShieldAlert, AlertTriangle, CheckCircle, Info, ExternalLink, Activity } from 'lucide-react';
 
 interface AdrPredictionPanelProps {
@@ -8,6 +9,8 @@ interface AdrPredictionPanelProps {
 }
 
 export const AdrPredictionPanel: React.FC<AdrPredictionPanelProps> = ({ predictions, onSelectAdr }) => {
+  const { translate } = useLanguage();
+
   return (
     <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
@@ -15,14 +18,14 @@ export const AdrPredictionPanel: React.FC<AdrPredictionPanelProps> = ({ predicti
           <div className="flex items-center gap-2">
             <ShieldAlert className="w-5 h-5 text-rose-400" />
             <h3 className="font-bold text-slate-100 text-base tracking-tight">
-              Multi-Label Adverse Drug Reaction (ADR) Signals
+              {translate('Adverse Drug Reaction Predictions')}
             </h3>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-950 text-rose-300 border border-rose-800/60">
               TGNN PREDICTION
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
-            Calibrated probabilistic risk stratification across organ system toxicities.
+            {translate('Calibrated probabilistic risk stratification across organ system toxicities.')}
           </p>
         </div>
 

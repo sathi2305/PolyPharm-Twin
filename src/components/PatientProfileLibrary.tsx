@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { PatientContext, PatientProfilePreset, Medicine } from '../types';
 import { storageService } from '../services/storageService';
+import { useLanguage } from '../context/LanguageContext';
 import {
   User,
   Users,
@@ -55,6 +56,7 @@ export const PatientProfileLibrary: React.FC<PatientProfileLibraryProps> = ({
   activeDrugCount = 0,
   onLoadPresetRegimen,
 }) => {
+  const { translate } = useLanguage();
   const [presets, setPresets] = useState<PatientProfilePreset[]>(() =>
     storageService.getPatientPresets()
   );
@@ -321,14 +323,14 @@ export const PatientProfileLibrary: React.FC<PatientProfileLibraryProps> = ({
             <div>
               <div className="flex items-center gap-2.5">
                 <h2 className="text-xl font-black text-white tracking-tight">
-                  Patient Profile Library
+                  {translate('Patient Digital-Twin Library')}
                 </h2>
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-cyan-950 text-cyan-300 border border-cyan-500/40">
                   {presets.length} Scenarios
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-1 max-w-2xl">
-                Curated demographic digital-twins and pharmacogenomic (PGx) genetic diplotypes. Switch between physiological scenarios to evaluate clearance kinetics, dose accumulation, and ADR vulnerabilities.
+                {translate('Curated demographic digital-twins and pharmacogenomic (PGx) genetic diplotypes. Switch between physiological scenarios to evaluate clearance kinetics, dose accumulation, and ADR vulnerabilities.')}
               </p>
             </div>
           </div>

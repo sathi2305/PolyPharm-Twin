@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { EnzymeProfile, Medicine } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 import { Radio, AlertOctagon, CheckCircle2, TrendingUp, TrendingDown, Info, ShieldAlert, Sparkles } from 'lucide-react';
 
 interface EnzymeMonitoringPanelProps {
@@ -15,6 +16,7 @@ export const EnzymeMonitoringPanel: React.FC<EnzymeMonitoringPanelProps> = ({
   currentTimeHours,
   isPlaying,
 }) => {
+  const { translate } = useLanguage();
   const [selectedEnzyme, setSelectedEnzyme] = useState<EnzymeProfile | null>(null);
 
   // Status badge styling helper
@@ -119,15 +121,14 @@ export const EnzymeMonitoringPanel: React.FC<EnzymeMonitoringPanelProps> = ({
           <div className="flex items-center gap-2">
             <Radio className="w-5 h-5 text-cyan-400 animate-pulse" />
             <h2 className="text-xl font-bold text-slate-100 tracking-tight">
-              Real-Time Cytochrome P450 & Phase II Enzyme Flux
+              {translate('Cytochrome P450 Enzyme Monitor')}
             </h2>
             <span className="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-cyan-950 text-cyan-300 border border-cyan-700/60">
               SIMULATED KINETIC ODE
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">
-            Continuously monitors metabolic bottlenecking, competitive inhibition ($K_i$), and transcriptional PXR/CAR induction
-            across active polypharmacy combinations.
+            {translate('Continuously monitors metabolic bottlenecking, competitive inhibition ($K_i$), and transcriptional PXR/CAR induction across active polypharmacy combinations.')}
           </p>
         </div>
 

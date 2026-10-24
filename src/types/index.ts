@@ -348,4 +348,40 @@ export interface RegimenAnnotation {
   updatedAt: string;
 }
 
+export type SimulationEventType =
+  | 'cmax_peak'
+  | 'enzyme_depletion'
+  | 'adr_trigger'
+  | 'metabolite_surge'
+  | 'clearance_milestone';
+
+export interface SimulationEvent {
+  id: string;
+  timeHours: number;
+  type: SimulationEventType;
+  title: string;
+  description: string;
+  severity: 'critical' | 'warning' | 'info' | 'success';
+  drugId?: string;
+  drugName?: string;
+  enzymeName?: string;
+  value?: number;
+  unit?: string;
+  recommendation?: string;
+}
+
+export interface RegimenSnapshot {
+  id: string;
+  name: string;
+  description?: string;
+  timestamp: string;
+  drugIds: string[];
+  drugNames: string[];
+  dosages: Record<string, number>;
+  patientContext: PatientContext;
+  tags?: string[];
+  isFavorite?: boolean;
+}
+
+
 

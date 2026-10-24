@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Medicine, PatientContext, PkTimePoint, EnzymeProfile, AdrPrediction, RegimenBaseline, PatientProfilePreset, ClinicalInteractionNote } from '../types';
+import { Medicine, PatientContext, PkTimePoint, EnzymeProfile, AdrPrediction, RegimenBaseline, PatientProfilePreset, ClinicalInteractionNote, RegimenSnapshot } from '../types';
 import { LanguageInfo } from '../data/languagesData';
 import { getTranslation } from '../data/translations';
+import { useLanguage } from '../context/LanguageContext';
 import { storageService } from '../services/storageService';
 import { getDefaultDoseMg, getDrugDoseRange, DrugDoseRange } from '../engine/admeCascade';
 import { validateDosageSafety, DOSAGE_SAFETY_GUIDELINES, DosageValidationResult } from '../data/dosageSafetyGuidelines';
 import { SimulationTimeline } from './SimulationTimeline';
+import { SimulationEventTimeline } from './SimulationEventTimeline';
+import { RegimenSnapshotModal } from './RegimenSnapshotModal';
 import { PkCurvesChart } from './PkCurvesChart';
 import { RegimenComparisonPanel } from './RegimenComparisonPanel';
 import { ClinicalInteractionNotesPanel } from './ClinicalInteractionNotesPanel';
@@ -37,6 +40,7 @@ import {
   TrendingUp,
   Dna,
   Info,
+  Camera,
 } from 'lucide-react';
 
 interface SimulationWorkbenchProps {
@@ -92,11 +96,28 @@ export const SimulationWorkbench: React.FC<SimulationWorkbenchProps> = ({
 }) => {
   const langCode = currentLanguage?.code || 'en';
   const t = getTranslation(langCode);
+  const { translate } = useLanguage();
 
   const [workbenchView, setWorkbenchView] = useState<'single' | 'compare'>('single');
   const [baseline, setBaseline] = useState<RegimenBaseline | null>(null);
   const [selectedAddDrugId, setSelectedAddDrugId] = useState<string>('');
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string>('');
+  const [isSnapshotModalOpen, setIsSnapshotModalOpen] = useState(false);
+
+  const handleRestoreSnapshot = (snapshot: RegimenSnapshot) => {
+    onLoadPreset(snapshot.drugIds);
+    snapshot.drugIds.forEach((id) => {
+      const dose = snapshot.dosages[id];
+      if (dose !== undefined) {
+        handleDoseChange(id, dose);
+      }
+    });
+    if (snapshot.patientContext) {
+      setPatientContext(snapshot.patientContext);
+    }
+    setSaveSuccessMsg(`Restored snapshot: ${snapshot.name}`);
+    setTimeout(() => setSaveSuccessMsg(''), 4000);
+  };
 
   // Individual Drug Dosages State (Fallback to localStorage if not supplied via props)
   const [internalDrugDosages, setInternalDrugDosages] = useState<Record<string, number>>(() => storageService.getDrugDosages());
@@ -484,6 +505,15 @@ export const SimulationWorkbench: React.FC<SimulationWorkbenchProps> = ({
           )}
 
           <button
+            onClick={() => setIsSnapshotModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-cyan-950/40 cursor-pointer transition-all"
+            title="Save current drug regimen and dosage settings into a list of saved configurations"
+          >
+            <Camera className="w-3.5 h-3.5" />
+            <span>{translate('Snapshots')}</span>
+          </button>
+
+          <button
             onClick={handleSaveBaseline}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold cursor-pointer transition-colors"
             title="Freeze current drug state as Baseline (A)"
@@ -524,6 +554,19 @@ export const SimulationWorkbench: React.FC<SimulationWorkbenchProps> = ({
             onLoadPreset={onLoadPreset}
             medicines={medicines}
             langCode={langCode}
+          />
+
+          {/* 48-Hour Visual Event Timeline (Cmax peaks, enzyme saturation, ADR triggers) */}
+          <SimulationEventTimeline
+            timeSeries={timeSeries}
+            activeDrugs={activeDrugs}
+            liveEnzymes={liveEnzymes}
+            currentTimeHours={currentTimeHours}
+            durationHours={durationHours}
+            onSeek={onSeek}
+            predictions={predictions}
+            drugDosages={activeDrugDosages}
+            patientContext={patientContext}
           />
 
           {/* Kinetic Timeline Scrubber (Shared across both regimens) */}
@@ -1787,6 +1830,19 @@ export const SimulationWorkbench: React.FC<SimulationWorkbenchProps> = ({
             </div>
           </div>
 
+          {/* 48-Hour Visual Event Timeline (Cmax peaks, enzyme saturation, ADR triggers) */}
+          <SimulationEventTimeline
+            timeSeries={timeSeries}
+            activeDrugs={activeDrugs}
+            liveEnzymes={liveEnzymes}
+            currentTimeHours={currentTimeHours}
+            durationHours={durationHours}
+            onSeek={onSeek}
+            predictions={predictions}
+            drugDosages={activeDrugDosages}
+            patientContext={patientContext}
+          />
+
           {/* Kinetic Timeline Scrubber */}
           <SimulationTimeline
             currentTimeHours={currentTimeHours}
@@ -1808,6 +1864,16 @@ export const SimulationWorkbench: React.FC<SimulationWorkbenchProps> = ({
           />
         </>
       )}
+
+      {/* Regimen Snapshot Management Modal */}
+      <RegimenSnapshotModal
+        isOpen={isSnapshotModalOpen}
+        onClose={() => setIsSnapshotModalOpen(false)}
+        activeDrugs={activeDrugs}
+        currentDosages={activeDrugDosages}
+        patientContext={patientContext}
+        onRestoreSnapshot={handleRestoreSnapshot}
+      />
     </div>
   );
 };

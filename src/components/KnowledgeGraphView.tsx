@@ -1,13 +1,43 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { BiomedicalGraph, KnowledgeNode, KnowledgeEdge, Medicine } from '../types';
-import { ZoomIn, ZoomOut, RotateCcw, Filter, Search, Info, GitBranch, Layers, Sparkles, AlertTriangle } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import {
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  Filter,
+  Search,
+  Info,
+  GitBranch,
+  Layers,
+  Sparkles,
+  AlertTriangle,
+  Pin,
+  PinOff,
+  ArrowRight,
+  Sliders,
+  Activity,
+  Check,
+  CheckCircle2,
+} from 'lucide-react';
 
 interface KnowledgeGraphViewProps {
   graph: BiomedicalGraph;
   activeDrugs: Medicine[];
+  onPinToWorkbench?: (node: KnowledgeNode) => void;
+  onToggleActiveDrug?: (drugId: string) => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
-export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, activeDrugs }) => {
+export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({
+  graph,
+  activeDrugs,
+  onPinToWorkbench,
+  onToggleActiveDrug,
+  onNavigateTab,
+}) => {
+  const { translate } = useLanguage();
+  const [pinToast, setPinToast] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<KnowledgeNode | null>(null);
   const [filterType, setFilterType] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -349,8 +379,130 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, a
             </div>
 
             <div className="my-3">
-              <h4 className="text-base font-bold text-white tracking-tight">{selectedNode.label}</h4>
-              <p className="text-[11px] text-slate-400 mt-0.5">Biomedical Entity ID: {selectedNode.id}</p>
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <h4 className="text-base font-bold text-white tracking-tight">{selectedNode.label}</h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Biomedical Entity ID: {selectedNode.id}</p>
+                </div>
+
+                {/* Quick Pin Icon Button */}
+                {selectedNode.type === 'drug' && (
+                  <button
+                    onClick={() => {
+                      if (onPinToWorkbench) {
+                        onPinToWorkbench(selectedNode);
+                      } else if (onToggleActiveDrug) {
+                        onToggleActiveDrug(selectedNode.id);
+                      }
+                      const isNowActive = activeDrugs.some((d) => d.id === selectedNode.id);
+                      setPinToast(
+                        isNowActive
+                          ? `Removed ${selectedNode.label} from Workbench`
+                          : `Pinned ${selectedNode.label} to Simulation Workbench!`
+                      );
+                      setTimeout(() => setPinToast(null), 3000);
+                    }}
+                    className={`p-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+                      activeDrugs.some((d) => d.id === selectedNode.id)
+                        ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
+                        : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                    }`}
+                    title="Pin / Unpin Drug"
+                  >
+                    {activeDrugs.some((d) => d.id === selectedNode.id) ? (
+                      <PinOff className="w-4 h-4 text-cyan-400" />
+                    ) : (
+                      <Pin className="w-4 h-4 text-slate-400" />
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* Pinning & Workbench Navigation CTAs */}
+              <div className="mt-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                {selectedNode.type === 'drug' && (
+                  <>
+                    {activeDrugs.some((d) => d.id === selectedNode.id) ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-1.5 text-emerald-400 font-semibold text-[11px]">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>{translate('Pinned to Workbench')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => onNavigateTab?.('simulation')}
+                            className="flex-1 py-1.5 px-2.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-[11px] flex items-center justify-center gap-1.5 shadow-md shadow-cyan-950/40 transition-colors cursor-pointer"
+                          >
+                            <Sliders className="w-3 h-3" />
+                            <span>{translate('Analyze in Simulation Workbench')}</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              onToggleActiveDrug?.(selectedNode.id);
+                              setPinToast(`Unpinned ${selectedNode.label}`);
+                              setTimeout(() => setPinToast(null), 3000);
+                            }}
+                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950/60 text-slate-400 hover:text-rose-400 border border-slate-700 transition-colors cursor-pointer"
+                            title={translate('Remove from Regimen')}
+                          >
+                            <PinOff className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          if (onPinToWorkbench) {
+                            onPinToWorkbench(selectedNode);
+                          } else if (onToggleActiveDrug) {
+                            onToggleActiveDrug(selectedNode.id);
+                          }
+                          setPinToast(`Pinned ${selectedNode.label} to Simulation Workbench!`);
+                          setTimeout(() => setPinToast(null), 3000);
+                        }}
+                        className="w-full py-1.5 px-3 rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold text-[11px] flex items-center justify-center gap-1.5 shadow-md shadow-cyan-950/40 transition-all cursor-pointer"
+                      >
+                        <Pin className="w-3.5 h-3.5" />
+                        <span>{translate('Pin to Workbench')}</span>
+                      </button>
+                    )}
+                  </>
+                )}
+
+                {selectedNode.type === 'enzyme' && (
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] text-purple-300 font-mono block">
+                      Enzyme Parameter Inspection:
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => onNavigateTab?.('simulation')}
+                        className="flex-1 py-1 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 font-semibold text-[10px] flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                      >
+                        <Sliders className="w-3 h-3" />
+                        <span>Workbench ODEs</span>
+                      </button>
+                      <button
+                        onClick={() => onNavigateTab?.('enzymes')}
+                        className="flex-1 py-1 px-2 rounded-lg bg-purple-950/80 hover:bg-purple-900 border border-purple-800/60 text-purple-200 font-semibold text-[10px] flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                      >
+                        <Activity className="w-3 h-3" />
+                        <span>Enzyme Monitor</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {selectedNode.type === 'adr' && (
+                  <button
+                    onClick={() => onNavigateTab?.('adr_xai')}
+                    className="w-full py-1 px-2 rounded-lg bg-rose-950/80 hover:bg-rose-900 border border-rose-800/60 text-rose-200 font-semibold text-[10px] flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                  >
+                    <span>Inspect ADR XAI Causal Chain</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Dynamic data fields */}
@@ -389,6 +541,55 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, a
               </ul>
             </div>
           </div>
+        )}
+
+        {/* Pin Toast Alert Notification */}
+        {pinToast && (
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-50 bg-cyan-950 border border-cyan-500/80 text-cyan-200 px-4 py-2 rounded-xl text-xs font-semibold shadow-2xl flex items-center gap-2 animate-in slide-in-from-top-2">
+            <Check className="w-4 h-4 text-cyan-400" />
+            <span>{pinToast}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Floating Bottom Pinned Regimen Tray */}
+      <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+        <div className="flex items-center gap-2 flex-wrap text-xs">
+          <div className="flex items-center gap-1.5 font-bold text-slate-200">
+            <Pin className="w-4 h-4 text-cyan-400" />
+            <span>{translate('Pinned Regimen')} ({activeDrugs.length}):</span>
+          </div>
+          {activeDrugs.length === 0 ? (
+            <span className="text-slate-500 italic text-[11px]">
+              {translate('Click any drug node to pin it to Workbench')}
+            </span>
+          ) : (
+            activeDrugs.map((drug) => (
+              <span
+                key={drug.id}
+                className="px-2 py-1 rounded-lg bg-slate-950 border border-cyan-900/60 text-cyan-300 font-mono text-[11px] flex items-center gap-1.5 shadow-sm"
+              >
+                <span>{drug.genericName}</span>
+                <button
+                  onClick={() => onToggleActiveDrug?.(drug.id)}
+                  className="text-slate-500 hover:text-rose-400 cursor-pointer"
+                  title="Unpin"
+                >
+                  ✕
+                </button>
+              </span>
+            ))
+          )}
+        </div>
+
+        {activeDrugs.length > 0 && onNavigateTab && (
+          <button
+            onClick={() => onNavigateTab('simulation')}
+            className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-cyan-950/40 cursor-pointer transition-all"
+          >
+            <span>{translate('Open in Simulation Workbench')}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         )}
       </div>
     </div>
